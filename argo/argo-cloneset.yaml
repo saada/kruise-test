@@ -1,0 +1,37 @@
+---
+apiVersion: apps.kruise.io/v1alpha1
+kind: CloneSet
+metadata:
+  labels:
+    app: cloneset-argo
+  name: cloneset-argo
+spec:
+  replicas: 100
+  updateStrategy:
+    type: InPlaceIfPossible
+    inPlaceUpdateStrategy:
+      gracePeriodSeconds: 30
+    maxUnavailable: 100%
+  selector:
+    matchLabels:
+      app: cloneset-argo
+  template:
+    metadata:
+      labels:
+        app: cloneset-argo
+    spec:
+      containers:
+        - name: nginx
+          image: quay.io/bitnami/nginx:1.19
+          volumeMounts:
+            - name: data-vol
+              mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+    - metadata:
+        name: data-vol
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "local-path"
+        resources:
+          requests:
+            storage: 100Ki
