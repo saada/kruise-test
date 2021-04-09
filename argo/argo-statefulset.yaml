@@ -1,0 +1,37 @@
+---
+apiVersion: apps.kruise.io/v1alpha1
+kind: StatefulSet
+metadata:
+  labels:
+    app: statefulset-argo
+  name: statefulset-argo
+spec:
+  replicas: 100
+  updateStrategy:
+    type: InPlaceIfPossible
+    inPlaceUpdateStrategy:
+      gracePeriodSeconds: 30
+    maxUnavailable: 100%
+  selector:
+    matchLabels:
+      app: statefulset-argo
+  template:
+    metadata:
+      labels:
+        app: statefulset-argo
+    spec:
+      containers:
+        - name: nginx
+          image: quay.io/bitnami/nginx:1.19
+          volumeMounts:
+            - name: data-vol
+              mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+    - metadata:
+        name: data-vol
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "local-path"
+        resources:
+          requests:
+            storage: 100Ki
