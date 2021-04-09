@@ -7,11 +7,14 @@ metadata:
   name: statefulset-argo
 spec:
   replicas: 100
+  podManagementPolicy: Parallel
   updateStrategy:
-    type: InPlaceIfPossible
-    inPlaceUpdateStrategy:
-      gracePeriodSeconds: 30
-    maxUnavailable: 100%
+    type: RollingUpdate
+    rollingUpdate:
+      podUpdatePolicy: ReCreate
+      inPlaceUpdateStrategy:
+        gracePeriodSeconds: 30
+      maxUnavailable: 100%
   selector:
     matchLabels:
       app: statefulset-argo
